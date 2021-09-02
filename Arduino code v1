@@ -1,0 +1,75 @@
+#include <Servo.h>
+Servo myservo;
+int pos = 100;
+
+
+const int trigPin = 12;
+const int echoPin = 13;
+float duration, distance, dist;
+
+void setup() {
+//5 and 6 are motors
+pinMode(8, OUTPUT);
+pinMode(9,OUTPUT);
+
+myservo.attach(3);
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+Serial.begin(9600);
+}
+
+void loop() {
+
+ 
+dist = aproxdist();
+Serial.print(dist);
+Serial.print("\n");
+delay(500);
+//ideal distance is abount 12
+
+if(dist>12){
+  
+  }else{
+  
+  for (pos = pos; pos <= 170; pos += 2) { // goes from 20 degrees to 170 degrees
+    // in steps of 2 degree
+    myservo.write(pos); // tell servo to go to position in variable 'pos'
+    dist = aproxdist(); //find and compare distance
+    if(dist > 12){break;}
+    delay(20);                       // waits 20ms for the servo to reach the position
+  }
+  for (pos = pos; pos >= 20; pos -= 2) { // goes from 170 degrees to 20 degrees
+    myservo.write(pos); // tell servo to go to position in variable 'pos'
+    dist = aproxdist();  //find and compare distance
+    if(dist>12){break;}
+    delay(20);                       // waits 20ms for the servo to reach the position
+  } 
+}
+
+
+if(pos>120){
+  digitalWrite(5,HIGH);
+  delay(1000);
+  digitalWrite(5,LOW);
+}else if(pos<70){
+  digitalWrite(6,HIGH);
+  delay(1000);
+  digitalWrite(6,LOW);
+}
+
+
+}
+
+
+float aproxdist(){
+  digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin,LOW);
+
+duration = pulseIn(echoPin,HIGH);
+distance = (duration*.0343)/2;
+return distance;
+
+  }
